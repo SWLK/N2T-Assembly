@@ -14,6 +14,6 @@ Current plan is to be using forth and/or C.
 
 ## TODO-List
 
-[] List out all the instructions in assembly and machine code to estimate workload
+- [ ] List out all the instructions in assembly and machine code to estimate workload
 
-[] Set up development environment
+- [ ] Set up development environment
