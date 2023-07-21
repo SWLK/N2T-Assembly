@@ -68,8 +68,21 @@ null |  0  0  0
 > Computing Instructions: dest=comp;jump
 > + either the dest or jump fields may be empty
 
+## Predefined Symbols
+
+Label | RAM address | hex
+ ---  |     ---     | ---
+   SP |      0      | 0x0000
+  LCL |      1      | 0x0001
+  ARG |      2      | 0x0002
+ THIS |      3      | 0x0003
+ THAT |      4      | 0x0004
+R0-R15|    0 - 15   | 0x0000 - 0x000F
+SCREEN|    16384    | 0x4000
+  KBD |    24576    | 0x6000
+
 ## TODO-List
 
-- [ ] List out all the instructions in assembly and machine code to estimate workload
+- [x] List out all the instructions in assembly and machine code to estimate workload
 
 - [ ] Set up development environment
