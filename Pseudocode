@@ -1,0 +1,51 @@
+Let's see how the program should look.
+
+Pseudocode for Assembler, written in Java.
+(verbose version)
+
+
+Program first reads an input file(XXX.hack)
+// Each line represents an instruction (A or C) or a label. 
+
+Initialize symbol table, put all the pre-defined values in it
+
+// First Pass
+Init. line counter = 0;
+String line = "";
+
+// Read one line(16 bits) at a time, use a newline character \n to differenciate them.
+LOOP while ( line = rb.readLine != null) // so we are at the end of the file and we are checking each line for \n
+	if "(" is inside line 
+		then it is a LABEL. Therefore call SYMBOLTABLE and store the label and adress there   
+END_LOOP
+
+
+
+// Second Pass
+Set line counter = 0
+
+LOOP while ( line = rb.readLine != null) // so we are at the end of the file and we are checking each line for \n
+	Take new line and send it to PARSE 	
+	if it is an A instruction, 
+		check if it is a Number, translate directly to binary 
+		else if it is a symbol 
+			check if the symbol is already on SYMBOLTABLE, then translate it
+			else put symbol on table and translate it.
+
+	if it is a C instruction, 
+		translate each individual part and concatenate the results
+	
+	
+	check if the number of bits == 16, if not, 
+		add paddding
+
+	
+	Write Binary code line to outfile
+
+
+If (is this the end of the file?)
+	Exit;
+
+Else, Move to the next line, lineCounter++
+
+
