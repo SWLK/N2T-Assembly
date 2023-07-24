@@ -12,10 +12,10 @@ public class Main {
         //String filePath = "C:\\Users\\Robert\\Desktop\\Learning CS\\From Nand to Tetris\\Untouched folder\\nand2tetris\\projects\\06\\add\\Add.asm";
         //String filePath = "C:\\Users\\Robert\\Desktop\\Learning CS\\From Nand to Tetris\\Untouched folder\\nand2tetris\\projects\\06\\max\\Max.asm";
         //String filePath = "C:\\Users\\Robert\\Desktop\\Learning CS\\From Nand to Tetris\\Untouched folder\\nand2tetris\\projects\\06\\rect\\Rect.asm";
-        String filePath = "C:\\Users\\Robert\\Desktop\\Learning CS\\From Nand to Tetris\\Untouched folder\\nand2tetris\\projects\\06\\pong\\Pong.asm";
+        String filePath = "C:\\Users\\Robert\\Desktop\\Learning CS\\From Nand to Tetris\\Untouched folder\\nand2tetris\\projects\\06\\pong\\PongL.asm";
 
         // First pass, focus on the Labels
-        int lineCounter = 0;
+        int lineCounter = -1;
         int variableCounter = 0;
         String line = "";
         String symbol = "";
@@ -50,6 +50,7 @@ public class Main {
                         } else {
                             // Add Label to symbol table, starting at 16. Remember to 1 one more because these point to the next instruction
                             symbolTable.AddEntry(symbol,  (lineCounter + 1));
+                            lineCounter--;
                         }
 
                     }
@@ -63,6 +64,7 @@ public class Main {
             }
 
 
+            symbolTable.printTable();
         // Second pass, now focus on the variables and translation
         // Reset variables
         lineCounter = 0;
@@ -133,12 +135,14 @@ public class Main {
                     }
                 // Check if it is a L instruction
                 } else if (parsedLine.instructionType() == 'L') {
+                    // Do nothing, L instructions are nt meant to be translated, they are placeholders
+                    continue;
                     // Get symbol/label
-                    symbol = parsedLine.symbol();
-                    translatedLine = Integer.toBinaryString(symbolTable.getAddress(symbol));
-                    while (translatedLine.length() < 16) {
-                        translatedLine = "0" + translatedLine;
-                    }
+//                    symbol = parsedLine.symbol();
+//                    translatedLine = Integer.toBinaryString(symbolTable.getAddress(symbol));
+//                    while (translatedLine.length() < 16) {
+//                        translatedLine = "0" + translatedLine;
+//                    }
 
                 } else {
                     // It is a C instruction
