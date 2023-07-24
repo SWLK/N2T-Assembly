@@ -2,10 +2,7 @@
 
 import java.io.IOException;
 import java.io.FileReader;
-import java.nio.file.Paths;
 import java.io.BufferedReader;
-import java.util.List;
-
 
 public class Main {
     public static void main(String[] args) {
@@ -17,6 +14,7 @@ public class Main {
 
         // First pass, focus on the Labels
         int lineCounter = 0;
+        int variableCounter = 0;
         String line = "";
         String symbol = "";
         int indexBegin;
@@ -31,7 +29,7 @@ public class Main {
 
                 while ((line = br.readLine()) != null) { // line is null when we reach the end of file
 
-                    // Check for comments before/after a line of code
+                    // Check for comments before/after a line of code and removes leading and trailing white spaces.
                     line = line.split("//")[0].trim();
                     if(line.isEmpty()){
                         continue;
@@ -42,28 +40,99 @@ public class Main {
                         indexEnd = line.indexOf(')');
                         symbol = line.substring(indexBegin + 1,indexEnd);
 
-//                        // Check if label it is already inside the table
-//                        if(symbolTable.contains(symbol)){
-//                            // Translate Label
-//
-//                        } else {
-//                            // Add Label to symbol table, starting at 16
-//                            symbolTable.AddEntry(symbol,  STARTADDRESS + lineCounter++);
-//                        }
+                        // Check if label it is already inside the table
+                        if(symbolTable.contains(symbol)){
+                            System.out.printf("There is a mistake, a label can only be used once, must be unique. ");
 
-                        symbolTable.AddEntry(symbol,  STARTADDRESS + lineCounter++);
+                        } else {
+                            // Add Label to symbol table, starting at 16. Remember to 1 one more because these point to the next instruction
+                            symbolTable.AddEntry(symbol,  (lineCounter + 1));
+                        }
 
                     }
-                    System.out.println(line);
+                    // System.out.println(line);
+                    lineCounter++;
                 }
-                symbolTable.printTable();
-
-
-
 
             } catch (IOException e) {
                 // Handle the exception if the file reading fails.
                 e.printStackTrace();
             }
+
+
+        // Second pass, now focus on the variables and translation
+        // Reset variables
+        lineCounter = 0;
+        variableCounter = 0;
+        line = "";
+        symbol = "";
+
+        String translatedLine = "";
+        int numberInLine = 0;
+
+        try {
+            // Read the lines one by one, separated by newlines \n
+            BufferedReader br = new BufferedReader(new FileReader(filePath));
+
+            while ((line = br.readLine()) != null) { // line is null when we reach the end of file
+
+
+                // Check for comments before/after a line of code and removes leading and trailing white spaces.
+                line = line.split("//")[0].trim();
+                if(line.isEmpty()){
+                    continue;
+                }
+
+                // Create parser object for each line
+                Parser parsedLine = new Parser(line);
+
+                // Check if it is an A instruction
+                if (parsedLine.instructionType() == 'A'){
+                    // Check if it is a number or symbol. Symbols don't start with numbers, so check only the first digit
+                    if (Character.isDigit(line.charAt(1))) {
+                        // Grab number
+                        try {
+                            numberInLine = Integer.parseInt(line.substring(1));
+                        } catch (NumberFormatException e) {
+                            System.out.println(line + "cannot be converted to an integer");
+                        }
+                        // Translate Number Directly
+                        translatedLine = Integer.toBinaryString(numberInLine);
+
+                    // It is a symbol
+                    } else {
+                        symbol = parsedLine.symbol();
+                        // Check if symbol is already on the table
+                        if(symbolTable.contains(symbol)){
+                            // Translate symbol
+                            translatedLine = Integer.toBinaryString(symbolTable.getAddress(symbol));
+                        } else {
+                            // Add symbol to symbol table
+                            symbolTable.AddEntry(symbol, STARTADDRESS + variableCounter++);
+                            // Then translate it
+                            translatedLine = Integer.toBinaryString(symbolTable.getAddress(symbol));
+                        }
+                    }
+                } else if (parsedLine.instructionType() == 'L') {
+                    // Get symbol/label
+                    symbol = parsedLine.symbol();
+                    translatedLine = Integer.toBinaryString(symbolTable.getAddress(symbol));
+
+                } else {
+                    // It is a C instruction
+
+                }
+                System.out.println(line);
+                System.out.println(translatedLine);
+                lineCounter++;
+            }
+            // symbolTable.printTable();
+
+        } catch (IOException e) {
+            // Handle the exception if the file reading fails.
+            e.printStackTrace();
         }
+
+
+    }
 }
