@@ -8,8 +8,8 @@ public class Main {
     public static void main(String[] args) {
 
         // Read input file (XXX.asm)
-        //String filePath = "C:\\Users\\Robert\\Desktop\\Learning CS\\From Nand to Tetris\\Untouched folder\\nand2tetris\\projects\\06\\add\\Add.asm";
-        String filePath = "C:\\Users\\Robert\\Desktop\\Learning CS\\From Nand to Tetris\\Untouched folder\\nand2tetris\\projects\\06\\max\\Max.asm";
+        String filePath = "C:\\Users\\Robert\\Desktop\\Learning CS\\From Nand to Tetris\\Untouched folder\\nand2tetris\\projects\\06\\add\\Add.asm";
+        //String filePath = "C:\\Users\\Robert\\Desktop\\Learning CS\\From Nand to Tetris\\Untouched folder\\nand2tetris\\projects\\06\\max\\Max.asm";
 
 
         // First pass, focus on the Labels
@@ -69,6 +69,9 @@ public class Main {
 
         String translatedLine = "";
         int numberInLine = 0;
+        String compCommand = "";
+        String destCommand = "";
+        String jumpCommand = "";
 
         try {
             // Read the lines one by one, separated by newlines \n
@@ -113,14 +116,28 @@ public class Main {
                             translatedLine = Integer.toBinaryString(symbolTable.getAddress(symbol));
                         }
                     }
+                // Check if it is a L instruction
                 } else if (parsedLine.instructionType() == 'L') {
                     // Get symbol/label
                     symbol = parsedLine.symbol();
                     translatedLine = Integer.toBinaryString(symbolTable.getAddress(symbol));
 
+
                 } else {
                     // It is a C instruction
 
+                    compCommand = parsedLine.comp();
+                    //System.out.println(compCommand);
+                    destCommand = parsedLine.dest();
+                    //System.out.println(destCommand);
+                    jumpCommand = parsedLine.jump();
+                    //System.out.println(jumpCommand);
+
+                    String compTranslated = Translator.getCompHashMap().get(compCommand);
+                    String destTranslated = Translator.getDestHashMap().get(destCommand);
+                    String jumpTranslated = Translator.getJumpHashMap().get(jumpCommand);
+
+                    translatedLine = compTranslated + destTranslated + jumpTranslated;
                 }
                 System.out.println(line);
                 System.out.println(translatedLine);

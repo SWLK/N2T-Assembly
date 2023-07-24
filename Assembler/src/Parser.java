@@ -29,20 +29,49 @@ public class Parser {
             symbol = line.substring(1);
         } else {
             // Instruction is of type C, doenst have a symbol
+            return "null";
         }
       return symbol;
     }
 
     public String dest(){
+        int indexBegin, indexEnd;
+        String command = "";
 
-        return null;
+        // check for " = ", it is always the first part of the command line
+        if ((indexEnd = line.indexOf("=")) != -1 ) {
+            command = line.substring(0, indexEnd);
+        } else {
+            // if there is no "=", then the value is not stored
+            command = "null";
+        }
+        return command;
     }
+
     public String comp(){
 
-        return null;
-    }
-    public String jump(){
+        String command = line;
 
-        return null;
+        if (line.contains("=")) {
+            command = command.substring(command.indexOf('=') + 1);
+        }
+        if (line.contains(";")) {
+            command = command.substring(0, command.indexOf(';'));
+        }
+        return command;
+    }
+
+    public String jump(){
+        int indexBegin, indexEnd;
+        String command = "";
+
+        // check for " ; ", it is always the last part of the command line
+        if ((indexBegin = line.indexOf(";")) != -1 ) {
+            command = line.substring(indexBegin + 1);
+        } else {
+            // if there is no ";", then the value is not stored
+            command = "null";
+        }
+        return command;
     }
 }
