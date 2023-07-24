@@ -3,14 +3,16 @@
 import java.io.IOException;
 import java.io.FileReader;
 import java.io.BufferedReader;
+import java.io.PrintWriter;
 
 public class Main {
     public static void main(String[] args) {
 
         // Read input file (XXX.asm)
-        String filePath = "C:\\Users\\Robert\\Desktop\\Learning CS\\From Nand to Tetris\\Untouched folder\\nand2tetris\\projects\\06\\add\\Add.asm";
+        //String filePath = "C:\\Users\\Robert\\Desktop\\Learning CS\\From Nand to Tetris\\Untouched folder\\nand2tetris\\projects\\06\\add\\Add.asm";
         //String filePath = "C:\\Users\\Robert\\Desktop\\Learning CS\\From Nand to Tetris\\Untouched folder\\nand2tetris\\projects\\06\\max\\Max.asm";
-
+        //String filePath = "C:\\Users\\Robert\\Desktop\\Learning CS\\From Nand to Tetris\\Untouched folder\\nand2tetris\\projects\\06\\rect\\Rect.asm";
+        String filePath = "C:\\Users\\Robert\\Desktop\\Learning CS\\From Nand to Tetris\\Untouched folder\\nand2tetris\\projects\\06\\pong\\Pong.asm";
 
         // First pass, focus on the Labels
         int lineCounter = 0;
@@ -23,6 +25,7 @@ public class Main {
         SymbolTable symbolTable = new SymbolTable();
 
             try {
+
                 // Read the lines one by one, separated by newlines \n
                 // As a note, bufferedReader is faster than scanner for larger files.
                 BufferedReader br = new BufferedReader(new FileReader(filePath));
@@ -66,6 +69,7 @@ public class Main {
         variableCounter = 0;
         line = "";
         symbol = "";
+        String aValue = "";
 
         String translatedLine = "";
         int numberInLine = 0;
@@ -76,7 +80,7 @@ public class Main {
         try {
             // Read the lines one by one, separated by newlines \n
             BufferedReader br = new BufferedReader(new FileReader(filePath));
-
+            PrintWriter writer = new PrintWriter("output.hack", "UTF-8");
             while ((line = br.readLine()) != null) { // line is null when we reach the end of file
 
 
@@ -101,6 +105,11 @@ public class Main {
                         }
                         // Translate Number Directly
                         translatedLine = Integer.toBinaryString(numberInLine);
+                        // Add padding
+                        while (translatedLine.length() < 16) {
+                            translatedLine = "0" + translatedLine;
+                        }
+
 
                     // It is a symbol
                     } else {
@@ -109,11 +118,17 @@ public class Main {
                         if(symbolTable.contains(symbol)){
                             // Translate symbol
                             translatedLine = Integer.toBinaryString(symbolTable.getAddress(symbol));
+                            while (translatedLine.length() < 16) {
+                                translatedLine = "0" + translatedLine;
+                            }
                         } else {
                             // Add symbol to symbol table
                             symbolTable.AddEntry(symbol, STARTADDRESS + variableCounter++);
                             // Then translate it
                             translatedLine = Integer.toBinaryString(symbolTable.getAddress(symbol));
+                            while (translatedLine.length() < 16) {
+                                translatedLine = "0" + translatedLine;
+                            }
                         }
                     }
                 // Check if it is a L instruction
@@ -121,7 +136,9 @@ public class Main {
                     // Get symbol/label
                     symbol = parsedLine.symbol();
                     translatedLine = Integer.toBinaryString(symbolTable.getAddress(symbol));
-
+                    while (translatedLine.length() < 16) {
+                        translatedLine = "0" + translatedLine;
+                    }
 
                 } else {
                     // It is a C instruction
@@ -137,14 +154,24 @@ public class Main {
                     String destTranslated = Translator.getDestHashMap().get(destCommand);
                     String jumpTranslated = Translator.getJumpHashMap().get(jumpCommand);
 
-                    translatedLine = compTranslated + destTranslated + jumpTranslated;
+                    if (compCommand.contains("M")){
+                        aValue = "1";
+                    } else {
+                        aValue = "0";
+                    }
+
+                    translatedLine = "111" + aValue + compTranslated + destTranslated + jumpTranslated;
                 }
                 System.out.println(line);
                 System.out.println(translatedLine);
+
+                // Write output file
+                writer.println(translatedLine);
                 lineCounter++;
             }
-            // symbolTable.printTable();
 
+            // symbolTable.printTable();
+            writer.close();
         } catch (IOException e) {
             // Handle the exception if the file reading fails.
             e.printStackTrace();
